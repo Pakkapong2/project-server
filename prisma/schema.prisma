@@ -30,13 +30,13 @@ model UserType {
 
 model Car {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  brand         String
-  model         String
-  license_plate String  @unique
-  price_per_day Int
+  brand         String?
+  model         String?
+  license_plate String?
+  price_per_day Int?
   availability  Boolean @default(true)
   picture       String?
-  location      String
+  location      String?
   bookings      Booking[]
 }
 
