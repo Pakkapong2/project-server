@@ -11,8 +11,9 @@ const carRoute = require("./routes/car.route");
 const authRoute = require("./routes/auth.route");
 const bookingRoute = require("./routes/booking.route");
 const fineRoute = require("./routes/fine.route");
+const authMiddleware = require("../middlewares/authMiddleware");
 
-const User = require("../models/user.model"); // ✅ แก้ path
+const User = require("../models/user.model"); // ✅ แก้ path ให้ถูกต้อง
 
 // ✅ ตั้งค่า CORS ให้รองรับ frontend
 app.use(cors({
@@ -34,18 +35,13 @@ app.use("/api/auth", authRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/fine", fineRoute);
 
-// ✅ Route Login
-// ✅ Route GET /api/user/me
-app.get("/api/user/me", async (req, res) => {
+// ✅ แก้ให้มี `/api/user/me` แค่ 1 อันเท่านั้น
+app.get("/api/user/me", authMiddleware, async (req, res) => {
   try {
-    // 🔹 สมมติว่าต้องใช้ token ในอนาคต
-    // if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const user = await User.findById(req.user.userId).select("-password"); // ดึงข้อมูล User แต่ไม่ส่ง password กลับ
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json({
-      id: "12345",
-      name: "John Doe",
-      email: "johndoe@example.com"
-    });
+    res.json(user);
   } catch (error) {
     console.error("🔥 User Me Error:", error);
     res.status(500).json({ message: "Internal Server Error" });

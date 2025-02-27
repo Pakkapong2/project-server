@@ -9,5 +9,5 @@ app.get("/:id", controller.getByIdRegister);
 app.put("/:id", controller.updateRegister);
 app.delete("/:id", controller.deleteRegister);
 
-app.post("/api/auth/login", controller.login);
+app.post("/login", controller.login);
 module.exports = app;
