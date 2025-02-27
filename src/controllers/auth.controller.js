@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const login = async (req, res) => {
-  console.log("📩 Received:", req.body); // ✅ ดูค่าที่ Frontend ส่งมา
+  console.log("📩 Received:", req.body); // ✅ Log ค่าที่ส่งมา
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -31,6 +31,8 @@ const login = async (req, res) => {
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
+    console.log("🔍 User from DB:", user);
+
     if (!user) {
       console.error("❌ User not found:", email);
       return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
@@ -39,7 +41,9 @@ const login = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     console.log("🔑 Password Match:", passwordMatch);
 
-    if (!passwordMatch) return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
+    }
 
     const token = generateToken({ userId: user.id, email: user.email });
     res.json({ token });
@@ -48,6 +52,7 @@ const login = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 
