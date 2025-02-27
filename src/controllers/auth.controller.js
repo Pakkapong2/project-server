@@ -1,15 +1,24 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 
+const prisma = new PrismaClient();
 const secretKey = process.env.JWT_SECRET_KEY || "your_secret_key";
 
 const generateToken = (payload) => {
   return jwt.sign(payload, secretKey, { expiresIn: "1h" });
 };
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "images/"),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix + "." + file.originalname.split(".").pop());
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -18,8 +27,7 @@ const login = async (req, res) => {
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch)
-      return res.status(401).json({ error: "Invalid credentials" });
+    if (!passwordMatch) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = generateToken({
       userId: user.id,
@@ -28,78 +36,33 @@ const login = async (req, res) => {
       userTypeId: user.userTypeId,
     });
 
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        userTypeId: user.userTypeId,
-      },
-    });
+    res.json({ token, user });
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "images/"),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname +
-        "-" +
-        uniqueSuffix +
-        "." +
-        file.originalname.split(".").pop()
-    );
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!allowedTypes.includes(file.mimetype)) {
-      return cb(
-        new Error("Only .jpg, .jpeg, and .png files are allowed!"),
-        false
-      );
-    }
-    cb(null, true);
-  },
-});
-
-
 const createRegister = async (req, res) => {
   upload.single("picture")(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message });
 
-    const {
-      username,
-      password,
-      name,
-      lastname,
-      email,
-      address,
-      tel,
-      userTypeId,
-    } = req.body;
+    const { username, password, name, lastname, email, address, tel, userTypeId } = req.body;
     const picture = req.file ? req.file.filename : null;
 
     try {
       const existingUser = await prisma.user.findFirst({
         where: { OR: [{ email }, { username }] },
       });
-      if (existingUser)
-        return res
-          .status(400)
-          .json({ error: "Email or Username already exists" });
+
+      if (existingUser) return res.status(400).json({ error: "Email or Username already exists" });
+
+      // ✅ เช็คว่ามี UserType จริงหรือไม่
+      const existingUserType = await prisma.userType.findUnique({ where: { id: userTypeId } });
+      if (!existingUserType) return res.status(400).json({ error: "Invalid userTypeId" });
 
       const hashedPassword = await bcrypt.hash(password, 10);
+
       const user = await prisma.user.create({
         data: {
           username,
@@ -110,7 +73,7 @@ const createRegister = async (req, res) => {
           address,
           tel,
           picture,
-          userTypeId: parseInt(userTypeId),
+          userType: { connect: { id: userTypeId } }, // ✅ Prisma ใช้ String
         },
       });
 
@@ -121,35 +84,20 @@ const createRegister = async (req, res) => {
   });
 };
 
-
 const getRegister = async (req, res) => {
   try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        name: true,
-        lastname: true,
-        tel: true,
-        picture: true,
-        userTypeId: true,
-      },
-    });
+    const users = await prisma.user.findMany({ include: { userType: true } });
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
 const getByIdRegister = async (req, res) => {
   const { id } = req.params;
-  if (isNaN(id) || id <= 0)
-    return res.status(400).json({ error: "Invalid user ID" });
 
   try {
-    const user = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+    const user = await prisma.user.findUnique({ where: { id }, include: { userType: true } });
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
   } catch (error) {
@@ -161,29 +109,12 @@ const updateRegister = async (req, res) => {
   upload.single("picture")(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message });
 
-    const {
-      username,
-      password,
-      name,
-      lastname,
-      email,
-      address,
-      tel,
-      userTypeId,
-    } = req.body;
+    const { id } = req.params;
+    const { username, password, name, lastname, email, address, tel, userTypeId } = req.body;
     const picture = req.file ? req.file.filename : null;
 
     try {
-      const { id } = req.params;
-      let updateData = {
-        username,
-        name,
-        lastname,
-        email,
-        address,
-        tel,
-        userTypeId: parseInt(userTypeId),
-      };
+      let updateData = { username, name, lastname, email, address, tel };
 
       if (password) {
         updateData.password = await bcrypt.hash(password, 10);
@@ -193,10 +124,15 @@ const updateRegister = async (req, res) => {
         updateData.picture = picture;
       }
 
-      const user = await prisma.user.update({
-        where: { id: parseInt(id) },
-        data: updateData,
-      });
+      if (userTypeId) {
+        // ✅ เช็คก่อนว่ามี userType จริงหรือไม่
+        const existingUserType = await prisma.userType.findUnique({ where: { id: userTypeId } });
+        if (!existingUserType) return res.status(400).json({ error: "Invalid userTypeId" });
+
+        updateData.userType = { connect: { id: userTypeId } };
+      }
+
+      const user = await prisma.user.update({ where: { id }, data: updateData });
 
       res.json(user);
     } catch (error) {
@@ -205,14 +141,11 @@ const updateRegister = async (req, res) => {
   });
 };
 
-
 const deleteRegister = async (req, res) => {
   const { id } = req.params;
-  if (isNaN(id) || id <= 0)
-    return res.status(400).json({ error: "Invalid user ID" });
 
   try {
-    await prisma.user.delete({ where: { id: parseInt(id) } });
+    await prisma.user.delete({ where: { id } });
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
