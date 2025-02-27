@@ -21,32 +21,34 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const login = async (req, res) => {
+  console.log("📩 Received:", req.body); // ✅ ดูค่าที่ Frontend ส่งมา
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    console.error("🚨 Missing email or password");
+    return res.status(400).json({ message: "กรุณากรอก Email และ Password" });
+  }
+
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log("🔍 User Found:", user); // ✅ เช็คว่าพบ User ไหม
+    if (!user) {
+      console.error("❌ User not found:", email);
+      return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
+    }
 
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
-
-    console.log("🛠 Comparing Password:", password, "VS", user.password);
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log("✅ Password Match:", passwordMatch); // ✅ ดูว่า bcrypt เปรียบเทียบสำเร็จไหม
+    console.log("🔑 Password Match:", passwordMatch);
 
-    if (!passwordMatch) return res.status(401).json({ error: "Invalid credentials" });
+    if (!passwordMatch) return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
 
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      username: user.username,
-      userTypeId: user.userTypeId,
-    });
-
-    res.json({ token, user });
+    const token = generateToken({ userId: user.id, email: user.email });
+    res.json({ token });
   } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ error: error.message });
+    console.error("🔥 Login Error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 const createRegister = async (req, res) => {
