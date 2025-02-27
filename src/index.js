@@ -3,7 +3,7 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 4000;
 const bodyParser = require("body-parser");
-const cors = require("cors");
+
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
@@ -14,13 +14,6 @@ const fineRoute = require("./routes/fine.route");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const User = require("../models/user.model"); // ✅ แก้ path ให้ถูกต้อง
-
-// ✅ ตั้งค่า CORS ให้รองรับ frontend
-app.use(cors({
-  origin: ["http://localhost:5173", "https://your-frontend-domain.com"],
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true
-}));
 
 app.use("/images", express.static("images"));
 app.use(bodyParser.json());
