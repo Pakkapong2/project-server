@@ -34,21 +34,30 @@ app.use("/booking", bookingRoute);
 app.use("/fine", fineRoute);
 
 // ✅ Route Login
-app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+app.post("/login", (req, res) => {
+  console.log("📩 Received Payload:", req.body); // ✅ Debug ค่าที่ส่งมา
+  
+  const { email, password } = req.body;
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ message: "ข้อมูลผิดพลาด" });
-    }
-
-    res.json({ message: "เข้าสู่ระบบสำเร็จ", token: "your-jwt-token" });
-  } catch (error) {
-    console.error("❌ Login Error:", error);
-    res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+  if (!email || !password) {
+    return res.status(400).json({ message: "กรุณากรอก Email และ Password" });
   }
+
+  // ตรวจสอบว่ามี user อยู่หรือไม่
+  const user = users.find(u => u.email === email);
+  if (!user) {
+    return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
+  }
+
+  // ตรวจสอบ password
+  const isMatch = bcrypt.compareSync(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
+  }
+
+  res.json({ message: "Login successful!" });
 });
+
 
 // ✅ เชื่อมต่อ MongoDB
 const mongoURI = "mongodb+srv://pakkapong:22072549gg@pakkapong.baya3.mongodb.net/cars"; 
