@@ -21,11 +21,16 @@ mongoose.connect(mongoURI, {
   .then(() => console.log("✅ MongoDB Connected!"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-app.use(cors({
-  origin: ["http://localhost:5173", "https://your-frontend-domain.com"],
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true
-}));
+// 🔥 ลบบรรทัดนี้ออก เพราะมีอยู่แล้วด้านบน
+// const cors = require("cors");
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173"], // อนุญาตให้ Frontend ใช้งาน API
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
 
 app.use("/images", express.static("images"));
 app.use(bodyParser.json());
