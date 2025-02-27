@@ -30,6 +30,7 @@ model UserType {
 
 model Car {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
   brand         String?
   model         String?
   license_plate String?

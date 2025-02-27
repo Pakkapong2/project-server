@@ -4,7 +4,20 @@ const prisma = new PrismaClient();
 const getAllCars = async (req, res) => {
   try {
     console.log("Fetching all cars...");
-    const cars = await prisma.car.findMany();
+    const cars = await prisma.car.findMany({
+      select: {
+        id: true,
+        name: true,  // เพิ่ม name
+        brand: true,
+        model: true,
+        license_plate: true,
+        price_per_day: true,
+        availability: true,
+        picture: true,
+        location: true,
+      },
+    });
+
     console.log("Cars fetched:", cars);
     res.json(cars);
   } catch (error) {
