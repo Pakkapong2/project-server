@@ -10,7 +10,7 @@ const carRoute = require("./routes/car.route");
 const authRoute = require("./routes/auth.route");
 const bookingRoute = require("./routes/booking.route");
 const fineRoute = require("./routes/fine.route");
-const authMiddleware = require("./middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // ✅ เชื่อมต่อ MongoDB ด้วย Mongoose
 const mongoURI = "mongodb+srv://pakkapong:22072549gg@pakkapong.baya3.mongodb.net/cars";
