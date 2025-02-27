@@ -24,6 +24,18 @@ app.use("/auth", authRoute);
 app.use("/booking", bookingRoute);
 app.use("/fine", fineRoute);
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).json({ message: "ข้อมูลผิดพลาด" });
+  }
+
+  res.json({ message: "เข้าสู่ระบบสำเร็จ", token: "your-jwt-token" });
+});
+
+
 app.listen(port, () => {
   console.log("App started at port: " + port);
 });
