@@ -1,22 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-export const getAllCars = async (req, res) => {
+const getAllCars = async (req, res) => {
   try {
     const cars = await prisma.car.findMany();
     res.json(cars);
   } catch (error) {
+    console.error("Error fetching cars:", error);
     res.status(500).json({ error: "Failed to fetch cars" });
   }
 };
 
-export const getCarById = async (req, res) => {
+const getCarById = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // ไม่ต้องใช้ ObjectId.isValid(id) เพราะ Prisma จัดการให้เอง
+    // แปลง id เป็นตัวเลขถ้าต้องการ (ขึ้นอยู่กับ Prisma schema)
     const car = await prisma.car.findUnique({
-      where: { id: id },
+      where: { id: isNaN(id) ? id : Number(id) },
     });
 
     if (!car) {
@@ -25,6 +26,8 @@ export const getCarById = async (req, res) => {
     
     res.json(car);
   } catch (error) {
+    console.error("Error fetching car by ID:", error);
     res.status(500).json({ error: "Failed to fetch car" });
   }
 };
+module.exports = { getAllCars, getCarById };
