@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTB Reserve a Car Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #2d64ff;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .header img {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-style: italic;
+        }
+
+        .banner {
+            width: 100%;
+            height: 400px;
+            background: url('/carbg.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .search-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .search-container h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background-color: #d3d3d3;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #2d64ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .check-container {
+            background: rgba(240, 240, 240, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        .check-container h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            background-color: #2d64ff;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .input-check {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            background-color: #d3d3d3;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .check-button {
+            padding: 10px 20px;
+            background-color: #2d64ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .contact img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <img src="c:\Users\COM713-0\Downloads\โลโก้.jpg" alt="CTB Logo">
+        <h1>CTB Reserve a car online</h1>
+    </div>
+
+    <!-- Banner + Search Form -->
+    <div class="banner">
+        <div class="search-container">
+            <h2>ค้นหารถเช่าที่คุณต้องการ</h2>
+            <div class="input-group">
+                <input type="text" class="input-box" placeholder="จุดรับ-คืนรถ">
+                <input type="date" class="input-box">
+                <input type="date" class="input-box">
+            </div>
+            <button class="search-button">ค้นหารถเช่า</button>
+        </div>
+    </div>
+
+    <!-- Check Reservation -->
+    <div class="check-container">
+        <h3>ตรวจสอบการจองของคุณ</h3>
+        <input type="text" class="input-check" placeholder="*กรอกหมายเลขการจอง">
+        <input type="text" class="input-check" placeholder="*กรอกชื่อ-นามสกุล">
+        <button class="check-button">ตรวจสอบ</button>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="contact">
+        <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="Line">
+        <span>@arisa108648</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/455/455705.png" alt="Phone">
+        <span>0626260262</span>
+    </div>
+
+</body>
+</html>

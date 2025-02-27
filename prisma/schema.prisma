@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Car {
+  id            Int       @id @default(autoincrement())
+  brand         String
+  model         String
+  license_plate String    @unique
+  price_per_day Int
+  availability  Boolean   @default(true)
+  picture       String?
+  location      String
+  bookings      Booking[] // Relation to Booking
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String
+  password    String
+  name        String
+  lastname    String
+  email       String  @unique
+  address     String
+  tel         String
+  picture     String?
+  userTypeId  Int        // Foreign Key to UserType
+  userType    UserType   @relation(fields: [userTypeId], references: [id])
+  bookings    Booking[]  // Relation to Booking
+}
+
+model UserType {
+  id    Int    @id @default(autoincrement())
+  name  String
+  users User[] // Relation back to User
+}
+
+model Booking {
+  id          Int       @id @default(autoincrement())
+  userId      Int       // Foreign Key to User
+  carId       Int       // Foreign Key to Car
+  bookingDate DateTime
+  returnDate  DateTime
+  user        User      @relation(fields: [userId], references: [id])
+  car         Car       @relation(fields: [carId], references: [id])
+  fine        Fine?     // Relation to Fine (ถ้ามีค่าปรับ)
+}
+
+model Fine {
+  id          Int       @id @default(autoincrement())
+  bookingId   Int       @unique // เชื่อมโยงกับการจอง (1 Booking มี 1 Fine เท่านั้น)
+  overdueDays Int       @default(0) // จำนวนวันที่เกินกำหนด
+  isDamaged   Boolean   @default(false) // รถเสียหายหรือไม่
+  fineAmount  Int       @default(0) // จำนวนเงินค่าปรับ
+  createdAt   DateTime  @default(now()) // วันที่บันทึกค่าปรับ
+
+  booking     Booking   @relation(fields: [bookingId], references: [id])
+}
+model Config {
+  key   String  @id
+  value String
+}
