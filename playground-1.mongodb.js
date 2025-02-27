@@ -1,8 +1,18 @@
 
 use("cars");
-db.Car.insertMany([
-  
-{ price_per_day: null }, { $set: { price_per_day: 0 } }
+db.User.insertMany([
+  {
+    username: "admin",
+    password: "1234",
+    name:"admin",
+    lastname:"zz",
+    email: "admin@gmail.com",
+    address:"111/g",
+    tel:"0254125412",
+    picture:"",
+    userTypeId:"67c01e13ccfb15957619f7fc"
+  }  
+
 
   ])
   

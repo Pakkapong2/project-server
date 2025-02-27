@@ -24,9 +24,14 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
+    console.log("🔍 User Found:", user); // ✅ เช็คว่าพบ User ไหม
+
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
+    console.log("🛠 Comparing Password:", password, "VS", user.password);
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log("✅ Password Match:", passwordMatch); // ✅ ดูว่า bcrypt เปรียบเทียบสำเร็จไหม
+
     if (!passwordMatch) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = generateToken({
@@ -42,6 +47,7 @@ const login = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const createRegister = async (req, res) => {
   upload.single("picture")(req, res, async (err) => {
