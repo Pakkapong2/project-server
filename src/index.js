@@ -8,6 +8,8 @@ const carRoute = require("./routes/car.route");
 const authRoute = require("./routes/auth.route")
 const bookingRoute = require("./routes/booking.route")
 const fineRoute = require("./routes/fine.route")
+const User = require("../models/user.model"); 
+
 
 
 app.use('/images', express.static('images'));
