@@ -35,33 +35,6 @@ app.use("/api/booking", bookingRoute);
 app.use("/api/fine", fineRoute);
 
 // ✅ Route Login
-app.post("/api/login", async (req, res) => {
-  try {
-    console.log("📩 Received Payload:", req.body); 
-
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: "กรุณากรอก Email และ Password" });
-    }
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
-    }
-
-    res.json({ message: "Login successful!", user });
-  } catch (error) {
-    console.error("🔥 Login Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
 // ✅ Route GET /api/user/me
 app.get("/api/user/me", async (req, res) => {
   try {
