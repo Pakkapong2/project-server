@@ -44,7 +44,7 @@ app.post("/login", (req, res) => {
   }
 
   // ตรวจสอบว่ามี user อยู่หรือไม่
-  const user = users.find(u => u.email === email);
+  const user = users.find(u => u.email === req.body.email);
   if (!user) {
     return res.status(401).json({ message: "Email หรือ Password ไม่ถูกต้อง" });
   }
