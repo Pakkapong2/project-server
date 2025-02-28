@@ -7,7 +7,7 @@ const getAllCars = async (req, res) => {
     const cars = await prisma.car.findMany({
       select: {
         id: true,
-        name: true,  // เพิ่ม name
+        name: true,
         brand: true,
         model: true,
         license_plate: true,
@@ -44,5 +44,57 @@ const getCarById = async (req, res) => {
   }
 };
 
-// Export ฟังก์ชัน
-module.exports = { getAllCars, getCarById };
+const create = async (req, res) => {
+  try {
+    const car = await prisma.car.create({
+      data: req.body,
+    });
+    res.status(201).json(car);
+  } catch (error) {
+    console.error("Error creating car:", error);
+    res.status(500).json({ error: "Failed to create car", details: error.message });
+  }
+};
+
+const put = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await prisma.car.update({
+      where: { id: id },
+      data: req.body,
+    });
+    res.json(car);
+  } catch (error) {
+    console.error("Error updating car:", error);
+    res.status(500).json({ error: "Failed to update car", details: error.message });
+  }
+};
+
+const patch = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await prisma.car.update({
+      where: { id: id },
+      data: req.body,
+    });
+    res.json(car);
+  } catch (error) {
+    console.error("Error patching car:", error);
+    res.status(500).json({ error: "Failed to patch car", details: error.message });
+  }
+};
+
+const deleteCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.car.delete({
+      where: { id: id },
+    });
+    res.json({ message: "Car deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting car:", error);
+    res.status(500).json({ error: "Failed to delete car", details: error.message });
+  }
+};
+
+module.exports = { getAllCars, getCarById, create, put, patch, delete: deleteCar };
