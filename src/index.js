@@ -26,13 +26,6 @@ mongoose.connect(mongoURI, {
 app.use(cors());
 
 
-app.use(
-  cors({
-    origin: "https://project-start.onrender.com", 
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
-  })
-);
 
 app.use("/images", express.static("images"));
 app.use(bodyParser.json());
