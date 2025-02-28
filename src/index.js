@@ -24,11 +24,14 @@ mongoose.connect(mongoURI, {
 // 🔥 ลบบรรทัดนี้ออก เพราะมีอยู่แล้วด้านบน
 // const cors = require("cors");
 
+app.use(cors());
+
+// หรือ อนุญาตเฉพาะ Frontend ที่กำหนด
 app.use(
   cors({
-    origin: ["http://localhost:5173"], // อนุญาตให้ Frontend ใช้งาน API
+    origin: "https://project-start.onrender.com", // URL ของ Frontend
     methods: "GET,POST,PUT,DELETE",
-    credentials: true,
+    allowedHeaders: "Content-Type,Authorization",
   })
 );
 
