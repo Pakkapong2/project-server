@@ -2,7 +2,7 @@ const express = require("express");
 const app = express.Router();
 const controller = require("../controllers/car.controller");
 
-// define routes here
+
 app.get("/", controller.getAllCars);
 app.get("/:id", controller.getCarById);
 app.post("/", controller.create);

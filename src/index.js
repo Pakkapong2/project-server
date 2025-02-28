@@ -12,7 +12,7 @@ const bookingRoute = require("./routes/booking.route");
 const fineRoute = require("./routes/fine.route");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-// ✅ เชื่อมต่อ MongoDB ด้วย Mongoose
+
 const mongoURI = "mongodb+srv://pakkapong:22072549gg@pakkapong.baya3.mongodb.net/cars";
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -21,15 +21,14 @@ mongoose.connect(mongoURI, {
   .then(() => console.log("✅ MongoDB Connected!"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-// 🔥 ลบบรรทัดนี้ออก เพราะมีอยู่แล้วด้านบน
-// const cors = require("cors");
+
 
 app.use(cors());
 
-// หรือ อนุญาตเฉพาะ Frontend ที่กำหนด
+
 app.use(
   cors({
-    origin: "https://project-start.onrender.com", // URL ของ Frontend
+    origin: "https://project-start.onrender.com", 
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
   })
@@ -44,7 +43,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/cars", carRoute);
-app.use("/api/auth", authRoute);
+app.use("/api/auth/", authRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/fine", fineRoute);
 

@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const { ObjectId } = require("mongodb"); // ใช้ ObjectId สำหรับ MongoDB
 const prisma = new PrismaClient();
 
-// ✅ เพิ่มค่าปรับใหม่
+
 const createFine = async (req, res) => {
   try {
     const { bookingId, overdueDays, isDamaged, fineAmount } = req.body;
@@ -16,7 +16,7 @@ const createFine = async (req, res) => {
       return res.status(404).json({ error: "Booking not found" });
     }
 
-    // ตรวจสอบว่าค่าปรับมีอยู่แล้วหรือไม่
+    
     const existingFine = await prisma.fine.findUnique({ where: { bookingId } });
     if (existingFine) {
       return res.status(400).json({ error: "Fine already exists for this booking" });
@@ -37,7 +37,7 @@ const createFine = async (req, res) => {
   }
 };
 
-// ✅ ดึงข้อมูลค่าปรับทั้งหมด
+
 const getFines = async (req, res) => {
   try {
     const fines = await prisma.fine.findMany({ include: { booking: true } });
@@ -47,7 +47,7 @@ const getFines = async (req, res) => {
   }
 };
 
-// ✅ ดึงค่าปรับตาม ID
+
 const getFineById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,7 +70,7 @@ const getFineById = async (req, res) => {
   }
 };
 
-// ✅ อัปเดตค่าปรับ
+
 const updateFine = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,7 +95,7 @@ const updateFine = async (req, res) => {
   }
 };
 
-// ✅ ลบค่าปรับ
+
 const deleteFine = async (req, res) => {
   try {
     const { id } = req.params;
@@ -116,7 +116,7 @@ const deleteFine = async (req, res) => {
   }
 };
 
-// ✅ Export ฟังก์ชันทั้งหมด
+
 module.exports = {
   createFine,
   getFines,
